@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Dashboard</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar-left">
+      <span class="app-title">🚗 CarDash</span>
+    </div>
+    <div class="title-bar-center">
+      <span id="current-time" class="time-display">00:00</span>
+      <span id="current-date" class="date-display"></span>
+    </div>
+    <div class="title-bar-right">
+      <div class="status-indicators">
+        <span id="temp-display" class="temp">22°C</span>
+        <span class="wifi-icon">📶</span>
+        <span class="bt-icon">🔵</span>
+      </div>
+      <div class="window-controls">
+        <button id="btn-minimize" class="win-btn">─</button>
+        <button id="btn-maximize" class="win-btn">□</button>
+        <button id="btn-close" class="win-btn close">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-container">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <button class="nav-btn active" data-view="home">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-text">Főoldal</span>
+      </button>
+      <button class="nav-btn" data-view="music">
+        <span class="nav-icon">🎵</span>
+        <span class="nav-text">Zene</span>
+      </button>
+      <button class="nav-btn" data-view="navigation">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-text">Navigáció</span>
+      </button>
+      <button class="nav-btn" data-view="carplay">
+        <span class="nav-icon">📱</span>
+        <span class="nav-text">CarPlay</span>
+      </button>
+      <button class="nav-btn" data-view="vehicle">
+        <span class="nav-icon">🚘</span>
+        <span class="nav-text">Jármű</span>
+      </button>
+      <button class="nav-btn" data-view="settings">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-text">Beállítások</span>
+      </button>
+    </nav>
+
+    <!-- Content Views -->
+    <main class="content">
+      <!-- Home View -->
+      <div id="view-home" class="view active">
+        <div class="home-grid">
+          <!-- Speed Widget -->
+          <div class="widget speed-widget">
+            <div class="speed-gauge">
+              <svg viewBox="0 0 200 200" class="gauge-svg">
+                <circle cx="100" cy="100" r="90" class="gauge-bg"/>
+                <circle cx="100" cy="100" r="90" class="gauge-fill" id="speed-gauge-fill"/>
+              </svg>
+              <div class="speed-value">
+                <span id="current-speed">0</span>
+                <span class="speed-unit">km/h</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Info Widget -->
+          <div class="widget info-widget">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-icon">⛽</span>
+                <span class="info-label">Üzemanyag</span>
+                <div class="info-bar">
+                  <div class="info-bar-fill" id="fuel-bar" style="width: 75%"></div>
+                </div>
+                <span class="info-value" id="fuel-value">75%</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">🔋</span>
+                <span class="info-label">Akkumulátor</span>
+                <div class="info-bar">
+                  <div class="info-bar-fill battery" id="battery-bar" style="width: 90%"></div>
+                </div>
+                <span class="info-value" id="battery-value">90%</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">🌡️</span>
+                <span class="info-label">Motor hőm.</span>
+                <span class="info-value large" id="engine-temp">85°C</span>
+              </div>
+              <div class="info-item">
+                <span class="info-icon">📍</span>
+                <span class="info-label">Hatótáv</span>
+                <span class="info-value large" id="range-value">450 km</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mini Map Widget -->
+          <div class="widget map-widget" onclick="showView('navigation')">
+            <div id="mini-map" class="mini-map"></div>
+            <div class="map-overlay">
+              <span>📍 Navigáció indítása</span>
+            </div>
+          </div>
+
+          <!-- Now Playing Widget -->
+          <div class="widget music-widget" onclick="showView('music')">
+            <div class="now-playing">
+              <div class="album-art" id="home-album-art">
+                <span class="music-placeholder">🎵</span>
+              </div>
+              <div class="track-info">
+                <span class="track-title" id="home-track-title">Nincs lejátszás</span>
+                <span class="track-artist" id="home-track-artist">Válassz zenét</span>
+              </div>
+              <div class="playback-controls-mini">
+                <button class="ctrl-btn-mini" id="home-prev">⏮</button>
+                <button class="ctrl-btn-mini play" id="home-play">▶</button>
+                <button class="ctrl-btn-mini" id="home-next">⏭</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weather Widget -->
+          <div class="widget weather-widget">
+            <div class="weather-content">
+              <span class="weather-icon">☀️</span>
+              <div class="weather-info">
+                <span class="weather-temp">22°C</span>
+                <span class="weather-desc">Napos</span>
+                <span class="weather-location">Budapest</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="widget actions-widget">
+            <h3>Gyors műveletek</h3>
+            <div class="quick-actions">
+              <button class="action-btn" onclick="showView('carplay')">
+                <span>📱</span>
+                <span>CarPlay</span>
+              </button>
+              <button class="action-btn" onclick="toggleHazard()">
+                <span id="hazard-icon">⚠️</span>
+                <span>Vészvillogó</span>
+              </button>
+              <button class="action-btn" onclick="toggleLights()">
+                <span id="lights-icon">💡</span>
+                <span>Világítás</span>
+              </button>
+              <button class="action-btn" onclick="showView('settings')">
+                <span>⚙️</span>
+                <span>Beállítások</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Music View -->
+      <div id="view-music" class="view">
+        <div class="music-container">
+          <div class="music-header">
+            <h2>🎵 Zenelejátszó</h2>
+            <div class="music-actions">
+              <button class="action-btn-sm" id="btn-open-folder">📁 Mappa megnyitása</button>
+              <button class="action-btn-sm" id="btn-open-files">📄 Fájlok kiválasztása</button>
+            </div>
+          </div>
+          
+          <div class="music-main">
+            <!-- Playlist -->
+            <div class="playlist-panel">
+              <h3>Lejátszási lista</h3>
+              <div class="playlist" id="playlist">
+                <div class="playlist-empty">
+                  <span>🎵</span>
+                  <p>Nincs zene hozzáadva</p>
+                  <p class="hint">Használd a fenti gombokat zenék hozzáadásához</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Player -->
+            <div class="player-panel">
+              <div class="album-cover" id="album-cover">
+                <div class="album-placeholder">
+                  <span>🎵</span>
+                </div>
+              </div>
+              
+              <div class="track-details">
+                <h2 class="track-name" id="track-name">Válassz egy számot</h2>
+                <p class="artist-name" id="artist-name">Ismeretlen előadó</p>
+              </div>
+
+              <div class="progress-container">
+                <span class="time-current" id="time-current">0:00</span>
+                <div class="progress-bar" id="progress-bar">
+                  <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span class="time-total" id="time-total">0:00</span>
+              </div>
+
+              <div class="playback-controls">
+                <button class="ctrl-btn" id="btn-shuffle">🔀</button>
+                <button class="ctrl-btn" id="btn-prev">⏮</button>
+                <button class="ctrl-btn play-btn" id="btn-play">▶</button>
+                <button class="ctrl-btn" id="btn-next">⏭</button>
+                <button class="ctrl-btn" id="btn-repeat">🔁</button>
+              </div>
+
+              <div class="volume-container">
+                <span class="volume-icon" id="volume-icon">🔊</span>
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80">
+                <span class="volume-value" id="volume-value">80%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <audio id="audio-player"></audio>
+      </div>
+
+      <!-- Navigation View -->
+      <div id="view-navigation" class="view">
+        <div class="navigation-container">
+          <div class="nav-header">
+            <div class="search-box">
+              <input type="text" id="search-input" placeholder="🔍 Cím keresése...">
+              <button class="search-btn" id="btn-search">Keresés</button>
+            </div>
+            <div class="nav-info">
+              <span id="nav-distance">--</span>
+              <span id="nav-time">--</span>
+            </div>
+          </div>
+          <div id="main-map" class="main-map"></div>
+          <div class="nav-controls">
+            <button class="nav-ctrl-btn" id="btn-locate">📍 Pozícióm</button>
+            <button class="nav-ctrl-btn" id="btn-zoom-in">➕</button>
+            <button class="nav-ctrl-btn" id="btn-zoom-out">➖</button>
+            <button class="nav-ctrl-btn" id="btn-3d-view">🗺️ 3D Nézet</button>
+          </div>
+          <div class="nav-suggestions" id="nav-suggestions">
+            <h4>Legutóbbi célok</h4>
+            <div class="suggestion-list">
+              <div class="suggestion-item" data-lat="47.4979" data-lng="19.0402">
+                <span class="suggestion-icon">🏠</span>
+                <div class="suggestion-info">
+                  <span class="suggestion-name">Otthon</span>
+                  <span class="suggestion-addr">Okány, Petőfi utca 9.</span>
+                </div>
+              </div>
+              <div class="suggestion-item" data-lat="47.5074" data-lng="19.0458">
+                <span class="suggestion-icon">💼</span>
+                <div class="suggestion-info">
+                  <span class="suggestion-name">Albérlet</span>
+                  <span class="suggestion-addr">Szeged, Vedres utca 1/b.</span>
+                </div>
+              </div>
+              <div class="suggestion-item" data-lat="47.4734" data-lng="19.0598">
+                <span class="suggestion-icon">🛒</span>
+                <div class="suggestion-info">
+                  <span class="suggestion-name">Csaba Center</span>
+                  <span class="suggestion-addr">Békéscsaba, Andrássy út 37-43.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CarPlay View -->
+      <div id="view-carplay" class="view">
+        <div class="carplay-container">
+          <div class="carplay-header">
+            <h2>📱 CarPlay / Android Auto</h2>
+            <div class="connection-status" id="carplay-status">
+              <span class="status-dot disconnected"></span>
+              <span>Nincs csatlakoztatva</span>
+            </div>
+          </div>
+          
+          <div class="carplay-content">
+            <div class="carplay-placeholder">
+              <div class="phone-icon">📱</div>
+              <h3>Csatlakoztasd a telefonod</h3>
+              <p>Használj USB kábelt vagy Bluetooth-t a csatlakozáshoz</p>
+              
+              <div class="connection-options">
+                <div class="conn-option">
+                  <span class="conn-icon">🔌</span>
+                  <span class="conn-label">USB</span>
+                  <span class="conn-status">Kész</span>
+                </div>
+                <div class="conn-option">
+                  <span class="conn-icon">📶</span>
+                  <span class="conn-label">Bluetooth</span>
+                  <span class="conn-status">Keresés...</span>
+                </div>
+                <div class="conn-option">
+                  <span class="conn-icon">📡</span>
+                  <span class="conn-label">WiFi</span>
+                  <span class="conn-status">Elérhető</span>
+                </div>
+              </div>
+
+              <div class="supported-apps">
+                <h4>Támogatott alkalmazások</h4>
+                <div class="app-icons">
+                  <div class="app-icon">
+                    <span>🎵</span>
+                    <span>Spotify</span>
+                  </div>
+                  <div class="app-icon">
+                    <span>🗺️</span>
+                    <span>Maps</span>
+                  </div>
+                  <div class="app-icon">
+                    <span>📞</span>
+                    <span>Telefon</span>
+                  </div>
+                  <div class="app-icon">
+                    <span>💬</span>
+                    <span>Üzenetek</span>
+                  </div>
+                  <div class="app-icon">
+                    <span>🎧</span>
+                    <span>Podcasts</span>
+                  </div>
+                  <div class="app-icon">
+                    <span>📻</span>
+                    <span>Rádió</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="carplay-footer">
+            <button class="carplay-btn" id="btn-scan-devices">🔍 Eszközök keresése</button>
+            <button class="carplay-btn" id="btn-pair-new">➕ Új eszköz párosítása</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle View -->
+      <div id="view-vehicle" class="view">
+        <div class="vehicle-container">
+          <h2>🚘 Jármű információk</h2>
+          
+          <div class="vehicle-grid">
+            <div class="vehicle-card">
+              <h3>Motor</h3>
+              <div class="vehicle-stats">
+                <div class="stat-item">
+                  <span class="stat-label">Fordulatszám</span>
+                  <span class="stat-value" id="rpm-value">2500 RPM</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Motor hőmérséklet</span>
+                  <span class="stat-value" id="motor-temp">85°C</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Olajnyomás</span>
+                  <span class="stat-value">3.5 bar</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="vehicle-card">
+              <h3>Üzemanyag</h3>
+              <div class="vehicle-stats">
+                <div class="stat-item">
+                  <span class="stat-label">Tankszint</span>
+                  <div class="fuel-gauge">
+                    <div class="fuel-level" id="fuel-level" style="width: 75%"></div>
+                  </div>
+                  <span class="stat-value">45L / 60L</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Átlagfogyasztás</span>
+                  <span class="stat-value">7.2 L/100km</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Becsült hatótáv</span>
+                  <span class="stat-value">625 km</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="vehicle-card">
+              <h3>Kerekek</h3>
+              <div class="tire-display">
+                <div class="tire-item">
+                  <span class="tire-pos">BE</span>
+                  <span class="tire-pressure">2.3</span>
+                </div>
+                <div class="tire-item">
+                  <span class="tire-pos">JE</span>
+                  <span class="tire-pressure">2.3</span>
+                </div>
+                <div class="tire-item">
+                  <span class="tire-pos">BH</span>
+                  <span class="tire-pressure">2.4</span>
+                </div>
+                <div class="tire-item">
+                  <span class="tire-pos">JH</span>
+                  <span class="tire-pressure">2.4</span>
+                </div>
+              </div>
+              <span class="tire-unit">bar</span>
+            </div>
+
+            <div class="vehicle-card">
+              <h3>Út információk</h3>
+              <div class="vehicle-stats">
+                <div class="stat-item">
+                  <span class="stat-label">Km óra állás</span>
+                  <span class="stat-value">54,231 km</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Napi km</span>
+                  <span class="stat-value">127 km</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Átlagsebesség</span>
+                  <span class="stat-value">62 km/h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings View -->
+      <div id="view-settings" class="view">
+        <div class="settings-container">
+          <h2>⚙️ Beállítások</h2>
+          
+          <div class="settings-grid">
+            <div class="settings-section">
+              <h3>Megjelenés</h3>
+              <div class="setting-item">
+                <span class="setting-label">Téma</span>
+                <select class="setting-select" id="theme-select">
+                  <option value="dark">Sötét</option>
+                  <option value="light">Világos</option>
+                  <option value="auto">Automatikus</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Fényerő</span>
+                <input type="range" class="setting-range" id="brightness-slider" min="20" max="100" value="80">
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Éjszakai mód</span>
+                <label class="toggle">
+                  <input type="checkbox" id="night-mode">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Hang</h3>
+              <div class="setting-item">
+                <span class="setting-label">Rendszerhangok</span>
+                <label class="toggle">
+                  <input type="checkbox" id="system-sounds" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Navigáció hangerő</span>
+                <input type="range" class="setting-range" id="nav-volume" min="0" max="100" value="70">
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Értesítések hangereje</span>
+                <input type="range" class="setting-range" id="notif-volume" min="0" max="100" value="50">
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Navigáció</h3>
+              <div class="setting-item">
+                <span class="setting-label">Mértékegység</span>
+                <select class="setting-select" id="unit-select">
+                  <option value="metric">Metrikus (km)</option>
+                  <option value="imperial">Imperial (mi)</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Autópálya elkerülése</span>
+                <label class="toggle">
+                  <input type="checkbox" id="avoid-highways">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Fizetős utak elkerülése</span>
+                <label class="toggle">
+                  <input type="checkbox" id="avoid-tolls">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>Rendszer</h3>
+              <div class="setting-item">
+                <span class="setting-label">Nyelv</span>
+                <select class="setting-select" id="language-select">
+                  <option value="hu">Magyar</option>
+                  <option value="en">English</option>
+                  <option value="de">Deutsch</option>
+                </select>
+              </div>
+              <div class="setting-item">
+                <span class="setting-label">Szoftver verzió</span>
+                <span class="setting-value">v1.0.0</span>
+              </div>
+              <div class="setting-item">
+                <button class="setting-btn" id="btn-reset">Gyári beállítások</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="renderer.js"></script>
+</body>
+</html>

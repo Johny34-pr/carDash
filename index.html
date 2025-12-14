@@ -181,20 +181,38 @@
           <div class="music-header">
             <h2>🎵 Zenelejátszó</h2>
             <div class="music-actions">
-              <button class="action-btn-sm" id="btn-open-folder">📁 Mappa megnyitása</button>
-              <button class="action-btn-sm" id="btn-open-files">📄 Fájlok kiválasztása</button>
+              <button class="action-btn-sm" id="btn-open-folder">📁 Playlist hozzáadása</button>
+              <button class="action-btn-sm" id="btn-open-files">📄 Zenék hozzáadása</button>
             </div>
           </div>
           
           <div class="music-main">
-            <!-- Playlist -->
-            <div class="playlist-panel">
-              <h3>Lejátszási lista</h3>
-              <div class="playlist" id="playlist">
-                <div class="playlist-empty">
-                  <span>🎵</span>
-                  <p>Nincs zene hozzáadva</p>
-                  <p class="hint">Használd a fenti gombokat zenék hozzáadásához</p>
+            <!-- Library Panel -->
+            <div class="library-panel">
+              <div class="library-tabs">
+                <button class="library-tab active" data-tab="playlists">📁 Playlistek</button>
+                <button class="library-tab" data-tab="tracks">🎵 Összes zene</button>
+              </div>
+              
+              <!-- Playlists Tab -->
+              <div class="library-content" id="playlists-tab">
+                <div class="playlists-list" id="playlists-list">
+                  <div class="playlist-empty">
+                    <span>📁</span>
+                    <p>Nincs playlist</p>
+                    <p class="hint">Adj hozzá egy mappát</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- All Tracks Tab -->
+              <div class="library-content hidden" id="tracks-tab">
+                <div class="playlist" id="playlist">
+                  <div class="playlist-empty">
+                    <span>🎵</span>
+                    <p>Nincs zene hozzáadva</p>
+                    <p class="hint">Használd a fenti gombokat</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -262,21 +280,21 @@
           <div class="nav-suggestions" id="nav-suggestions">
             <h4>Legutóbbi célok</h4>
             <div class="suggestion-list">
-              <div class="suggestion-item" data-lat="47.4979" data-lng="19.0402">
+              <div class="suggestion-item" data-lat="46.896278381347656" data-lng="21.34123420715332">
                 <span class="suggestion-icon">🏠</span>
                 <div class="suggestion-info">
                   <span class="suggestion-name">Otthon</span>
                   <span class="suggestion-addr">Okány, Petőfi utca 9.</span>
                 </div>
               </div>
-              <div class="suggestion-item" data-lat="47.5074" data-lng="19.0458">
+              <div class="suggestion-item" data-lat="46.245365142822266" data-lng="20.15741539001465">
                 <span class="suggestion-icon">💼</span>
                 <div class="suggestion-info">
                   <span class="suggestion-name">Albérlet</span>
                   <span class="suggestion-addr">Szeged, Vedres utca 1/b.</span>
                 </div>
               </div>
-              <div class="suggestion-item" data-lat="47.4734" data-lng="19.0598">
+              <div class="suggestion-item" data-lat="46.6778655" data-lng="21.0898374">
                 <span class="suggestion-icon">🛒</span>
                 <div class="suggestion-info">
                   <span class="suggestion-name">Csaba Center</span>
@@ -394,11 +412,11 @@
                   <div class="fuel-gauge">
                     <div class="fuel-level" id="fuel-level" style="width: 75%"></div>
                   </div>
-                  <span class="stat-value">45L / 60L</span>
+                  <span class="stat-value">35L / 47L</span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">Átlagfogyasztás</span>
-                  <span class="stat-value">7.2 L/100km</span>
+                  <span class="stat-value">5.5 L/100km</span>
                 </div>
                 <div class="stat-item">
                   <span class="stat-label">Becsült hatótáv</span>

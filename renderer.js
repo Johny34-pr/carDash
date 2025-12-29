@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const jsmediatags = require('jsmediatags');
 
 // DOM Elements
 let currentView = 'home';
@@ -24,7 +25,8 @@ const musicPlayer = {
   currentIndex: -1,
   isPlaying: false,
   shuffle: false,
-  repeat: false
+  repeat: false,
+  metadataCache: {}     // Cache for track metadata
 };
 
 // Storage key for saving playlists
@@ -945,10 +947,12 @@ function initializeMusicPlayer() {
 
   // Volume control
   const volumeSlider = document.getElementById('volume-slider');
+  volumeSlider.style.setProperty('--volume-percent', '100%');
   volumeSlider.addEventListener('input', (e) => {
     const volume = e.target.value / 100;
     musicPlayer.audio.volume = volume;
     document.getElementById('volume-value').textContent = `${e.target.value}%`;
+    e.target.style.setProperty('--volume-percent', `${e.target.value}%`);
     updateVolumeIcon(volume);
   });
 
@@ -1166,10 +1170,115 @@ function playTrack(index) {
 
 // Update now playing UI
 function updateNowPlaying(track) {
+  // Set defaults first
   document.getElementById('track-name').textContent = track.name;
   document.getElementById('artist-name').textContent = 'Ismeretlen előadó';
   document.getElementById('home-track-title').textContent = track.name;
   document.getElementById('home-track-artist').textContent = 'Ismeretlen előadó';
+  
+  // Hide meta elements initially
+  document.getElementById('meta-album').style.display = 'none';
+  document.getElementById('meta-year').style.display = 'none';
+  document.getElementById('meta-genre').style.display = 'none';
+  
+  // Reset album art
+  const albumPlaceholder = document.querySelector('.album-placeholder');
+  const albumArtImg = document.getElementById('album-art-img');
+  albumPlaceholder.style.display = 'flex';
+  albumArtImg.style.display = 'none';
+  
+  // Check cache first
+  if (musicPlayer.metadataCache[track.path]) {
+    applyMetadata(musicPlayer.metadataCache[track.path]);
+    return;
+  }
+  
+  // Read metadata from file
+  jsmediatags.read(track.path, {
+    onSuccess: function(tag) {
+      const tags = tag.tags;
+      const metadata = {
+        title: tags.title || track.name,
+        artist: tags.artist || 'Ismeretlen előadó',
+        album: tags.album || null,
+        year: tags.year || null,
+        genre: tags.genre || null,
+        picture: tags.picture || null
+      };
+      
+      // Cache the metadata
+      musicPlayer.metadataCache[track.path] = metadata;
+      
+      // Apply if still the current track
+      if (musicPlayer.currentTracks[musicPlayer.currentIndex]?.path === track.path) {
+        applyMetadata(metadata);
+      }
+    },
+    onError: function(error) {
+      console.log('Error reading metadata:', error);
+    }
+  });
+}
+
+// Apply metadata to UI
+function applyMetadata(metadata) {
+  // Update track name and artist
+  document.getElementById('track-name').textContent = metadata.title;
+  document.getElementById('artist-name').textContent = metadata.artist;
+  document.getElementById('home-track-title').textContent = metadata.title;
+  document.getElementById('home-track-artist').textContent = metadata.artist;
+  
+  // Update album
+  const metaAlbum = document.getElementById('meta-album');
+  if (metadata.album) {
+    metaAlbum.querySelector('.meta-value').textContent = metadata.album;
+    metaAlbum.style.display = 'inline-flex';
+  }
+  
+  // Update year
+  const metaYear = document.getElementById('meta-year');
+  if (metadata.year) {
+    metaYear.querySelector('.meta-value').textContent = metadata.year;
+    metaYear.style.display = 'inline-flex';
+  }
+  
+  // Update genre
+  const metaGenre = document.getElementById('meta-genre');
+  if (metadata.genre) {
+    metaGenre.querySelector('.meta-value').textContent = metadata.genre;
+    metaGenre.style.display = 'inline-flex';
+  }
+  
+  // Update album art
+  const albumPlaceholder = document.querySelector('.album-placeholder');
+  const albumArtImg = document.getElementById('album-art-img');
+  const homeAlbumArt = document.getElementById('home-album-art');
+  
+  if (metadata.picture) {
+    const { data, format } = metadata.picture;
+    let base64String = '';
+    for (let i = 0; i < data.length; i++) {
+      base64String += String.fromCharCode(data[i]);
+    }
+    const imageUrl = `data:${format};base64,${btoa(base64String)}`;
+    
+    albumArtImg.src = imageUrl;
+    albumArtImg.style.display = 'block';
+    albumPlaceholder.style.display = 'none';
+    
+    // Update home album art too
+    if (homeAlbumArt) {
+      homeAlbumArt.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />`;
+    }
+  } else {
+    albumArtImg.style.display = 'none';
+    albumPlaceholder.style.display = 'flex';
+    
+    // Reset home album art
+    if (homeAlbumArt) {
+      homeAlbumArt.innerHTML = '<span class="music-placeholder">🎵</span>';
+    }
+  }
 }
 
 // Toggle play/pause
@@ -1201,9 +1310,31 @@ function togglePlay() {
 
 // Update play button
 function updatePlayButton() {
-  const icon = musicPlayer.isPlaying ? '⏸' : '▶';
-  document.getElementById('btn-play').textContent = icon;
-  document.getElementById('home-play').textContent = icon;
+  // Update main play button
+  const playBtn = document.getElementById('btn-play');
+  const playIcon = playBtn.querySelector('.play-icon');
+  const pauseIcon = playBtn.querySelector('.pause-icon');
+  
+  if (musicPlayer.isPlaying) {
+    playIcon.style.display = 'none';
+    pauseIcon.style.display = 'block';
+  } else {
+    playIcon.style.display = 'block';
+    pauseIcon.style.display = 'none';
+  }
+  
+  // Update home play button (SVG based)
+  const homePlayBtn = document.getElementById('home-play');
+  const homePlayIcon = homePlayBtn.querySelector('.play-icon');
+  const homePauseIcon = homePlayBtn.querySelector('.pause-icon');
+  
+  if (musicPlayer.isPlaying) {
+    homePlayIcon.style.display = 'none';
+    homePauseIcon.style.display = 'block';
+  } else {
+    homePlayIcon.style.display = 'block';
+    homePauseIcon.style.display = 'none';
+  }
 }
 
 // Play previous track
@@ -1279,11 +1410,28 @@ function formatTime(seconds) {
 
 // Update volume icon
 function updateVolumeIcon(volume) {
-  let icon = '🔊';
-  if (volume === 0) icon = '🔇';
-  else if (volume < 0.3) icon = '🔈';
-  else if (volume < 0.7) icon = '🔉';
-  document.getElementById('volume-icon').textContent = icon;
+  const volumeBtn = document.getElementById('volume-icon');
+  const volHigh = volumeBtn.querySelector('.vol-high');
+  const volLow = volumeBtn.querySelector('.vol-low');
+  const volMute = volumeBtn.querySelector('.vol-mute');
+  
+  // Hide all icons first
+  volHigh.style.display = 'none';
+  volLow.style.display = 'none';
+  volMute.style.display = 'none';
+  
+  // Show appropriate icon
+  if (volume === 0) {
+    volMute.style.display = 'block';
+  } else if (volume < 0.5) {
+    volLow.style.display = 'block';
+  } else {
+    volHigh.style.display = 'block';
+  }
+  
+  // Update slider gradient
+  const slider = document.getElementById('volume-slider');
+  slider.style.setProperty('--volume-percent', `${volume * 100}%`);
 }
 
 // Initialize Maps

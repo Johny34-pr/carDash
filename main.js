@@ -20,6 +20,9 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
   
+  // Open DevTools
+  // mainWindow.webContents.openDevTools();
+  
   // Toggle fullscreen with F11
   mainWindow.webContents.on('before-input-event', (event, input) => {
     if (input.key === 'F11') {

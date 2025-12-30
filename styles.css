@@ -61,7 +61,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 62px;
+  height: 82px;
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   padding: 0 20px;
@@ -77,7 +77,7 @@ html, body {
 
 .app-title {
   font-weight: 700;
-  font-size: 32px;
+  font-size: 50px;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -92,14 +92,14 @@ html, body {
 }
 
 .time-display {
-  font-size: 32px;
+  font-size: 42px;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: 1px;
 }
 
 .date-display {
-  font-size: 20px;
+  font-size: 32px;
   color: var(--text-secondary);
   font-weight: 500;
 }
@@ -120,7 +120,7 @@ html, body {
 .temp {
   color: var(--accent-tertiary);
   font-weight: 600;
-  font-size: 20px;
+  font-size: 32px;
 }
 
 .window-controls {
@@ -162,7 +162,7 @@ html, body {
 
 /* Sidebar */
 .sidebar {
-  width: 135px;
+  width: 200px;
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   display: flex;
@@ -224,7 +224,7 @@ html, body {
 }
 
 .nav-text {
-  font-size: 20px;
+  font-size: 32px;
   font-weight: 600;
   position: relative;
   z-index: 1;
@@ -335,7 +335,7 @@ html, body {
 }
 
 .speed-value span:first-child {
-  font-size: 56px;
+  font-size: 92px;
   font-weight: 800;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
@@ -347,7 +347,7 @@ html, body {
 
 .speed-unit {
   display: block;
-  font-size: 16px;
+  font-size: 24px;
   color: var(--text-secondary);
   font-weight: 500;
   margin-top: 4px;
@@ -386,7 +386,7 @@ html, body {
 }
 
 .info-label {
-  font-size: 14px;
+  font-size: 20px;
   color: var(--text-secondary);
   font-weight: 500;
   text-transform: uppercase;
@@ -394,7 +394,7 @@ html, body {
 }
 
 .info-bar {
-  height: 8px;
+  height: 16px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   overflow: hidden;
@@ -415,7 +415,7 @@ html, body {
 }
 
 .info-value {
-  font-size: 16px;
+  font-size: 20px;
   color: var(--text-primary);
   font-weight: 600;
 }
@@ -456,7 +456,7 @@ html, body {
   color: white;
   font-weight: 600;
   border-radius: 0 0 22px 22px;
-  font-size: 14px;
+  font-size: 22px;
 }
 
 /* Music Widget */
@@ -506,7 +506,7 @@ html, body {
 }
 
 .track-title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   color: var(--text-primary);
   display: block;
@@ -514,7 +514,7 @@ html, body {
 }
 
 .track-artist {
-  font-size: 15px;
+  font-size: 24px;
   color: var(--text-secondary);
 }
 
@@ -525,8 +525,8 @@ html, body {
 }
 
 .ctrl-btn-mini {
-  width: 42px;
-  height: 42px;
+  width: 72px;
+  height: 72px;
   border: none;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -540,8 +540,8 @@ html, body {
 }
 
 .ctrl-btn-mini svg {
-  width: 18px;
-  height: 18px;
+  width: 42px;
+  height: 42px;
   transition: transform 0.2s ease;
 }
 
@@ -561,14 +561,14 @@ html, body {
 
 .ctrl-btn-mini.play {
   background: var(--accent-gradient);
-  width: 50px;
-  height: 50px;
+  width: 80px;
+  height: 80px;
   box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
 }
 
 .ctrl-btn-mini.play svg {
-  width: 22px;
-  height: 22px;
+  width: 62px;
+  height: 62px;
   margin-left: 2px;
 }
 
@@ -592,7 +592,7 @@ html, body {
 }
 
 .weather-icon {
-  font-size: 102px;
+  font-size: 152px;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
 }
 
@@ -603,26 +603,26 @@ html, body {
 }
 
 .weather-temp {
-  font-size: 42px;
+  font-size: 62px;
   font-weight: 800;
   color: var(--accent-tertiary);
   line-height: 1;
 }
 
 .weather-desc {
-  font-size: 22px;
+  font-size: 32px;
   color: var(--text-secondary);
   font-weight: 500;
 }
 
 .weather-location {
-  font-size: 20px;
+  font-size: 24px;
   color: var(--text-muted);
 }
 
 /* Actions Widget */
 .actions-widget h3 {
-  font-size: 14px;
+  font-size: 24px;
   margin-bottom: 16px;
   color: var(--text-secondary);
   text-transform: uppercase;
@@ -662,7 +662,7 @@ html, body {
 }
 
 .action-btn span:last-child {
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
 }
 
@@ -686,7 +686,7 @@ html, body {
 }
 
 .music-header h2 {
-  font-size: 28px;
+  font-size: 42px;
   font-weight: 700;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
@@ -706,7 +706,7 @@ html, body {
   color: var(--text-primary);
   cursor: pointer;
   transition: all var(--transition-fast);
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 500;
 }
 
@@ -746,7 +746,7 @@ html, body {
   border: 1px solid var(--border-color-subtle);
   border-radius: 12px;
   color: var(--text-secondary);
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -806,13 +806,13 @@ html, body {
 
 .folder-name {
   flex: 1;
-  font-size: 15px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .folder-count {
-  font-size: 13px;
+  font-size: 22px;
   color: var(--text-primary);
   padding: 4px 10px;
   background: var(--bg-secondary);
@@ -821,12 +821,12 @@ html, body {
 
 .folder-play-btn,
 .folder-delete-btn {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 22px;
   transition: all var(--transition-fast);
 }
 
@@ -895,13 +895,17 @@ html, body {
   text-align: center;
 }
 
+.playlist-empty p{
+  font-size: 20px;
+}
+
 .playlist-empty span {
   font-size: 48px;
   margin-bottom: 10px;
 }
 
 .playlist-empty .hint {
-  font-size: 16px;
+  font-size: 18px;
   margin-top: 5px;
 }
 
@@ -945,7 +949,7 @@ html, body {
 }
 
 .playlist-item .item-name {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
@@ -1006,7 +1010,7 @@ html, body {
 }
 
 .track-name {
-  font-size: 32px;
+  font-size: 42px;
   font-weight: 700;
   margin-bottom: 8px;
   max-width: 400px;
@@ -1016,7 +1020,7 @@ html, body {
 }
 
 .artist-name {
-  font-size: 24px;
+  font-size: 32px;
   color: var(--text-secondary);
   margin-bottom: 12px;
 }
@@ -1064,7 +1068,7 @@ html, body {
 }
 
 .time-current, .time-total {
-  font-size: 15px;
+  font-size: 24px;
   color: var(--text-secondary);
   min-width: 45px;
   font-weight: 500;
@@ -1072,7 +1076,7 @@ html, body {
 
 .progress-bar {
   flex: 1;
-  height: 8px;
+  height: 12px;
   background: var(--bg-tertiary);
   border-radius: 4px;
   cursor: pointer;
@@ -1096,8 +1100,8 @@ html, body {
 }
 
 .ctrl-btn {
-  width: 52px;
-  height: 52px;
+  width: 72px;
+  height: 72px;
   border: none;
   background: var(--bg-tertiary);
   color: var(--text-primary);
@@ -1112,8 +1116,8 @@ html, body {
 }
 
 .ctrl-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 44px;
+  height: 44px;
   transition: transform 0.2s ease;
 }
 
@@ -1144,15 +1148,15 @@ html, body {
 }
 
 .ctrl-btn.secondary {
-  width: 44px;
-  height: 44px;
+  width: 54px;
+  height: 54px;
   background: transparent;
   border: 2px solid var(--border-color-subtle);
 }
 
 .ctrl-btn.secondary svg {
-  width: 18px;
-  height: 18px;
+  width: 28px;
+  height: 28px;
   color: var(--text-secondary);
 }
 
@@ -1176,16 +1180,16 @@ html, body {
 }
 
 .play-btn {
-  width: 72px;
-  height: 72px;
+  width: 92px;
+  height: 92px;
   background: var(--accent-gradient);
   box-shadow: 0 8px 32px rgba(255, 107, 53, 0.4), 
               0 0 0 4px rgba(255, 107, 53, 0.1);
 }
 
 .play-btn svg {
-  width: 32px;
-  height: 32px;
+  width: 72px;
+  height: 72px;
   margin-left: 3px;
 }
 
@@ -1210,8 +1214,8 @@ html, body {
 }
 
 .volume-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: transparent;
   color: var(--text-secondary);
@@ -1224,8 +1228,8 @@ html, body {
 }
 
 .volume-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 32px;
+  height: 32px;
 }
 
 .volume-btn:hover {
@@ -1259,7 +1263,7 @@ html, body {
 }
 
 .volume-value {
-  font-size: 13px;
+  font-size: 22px;
   color: var(--text-secondary);
   min-width: 40px;
   text-align: right;
@@ -1294,7 +1298,7 @@ html, body {
   border: 1px solid var(--border-color-subtle);
   border-radius: 16px;
   color: var(--text-primary);
-  font-size: 18px;
+  font-size: 32px;
   outline: none;
   transition: all var(--transition-fast);
 }
@@ -1305,7 +1309,7 @@ html, body {
 }
 
 .search-btn {
-  font-size: 17px;
+  font-size: 31px;
   padding: 14px 28px;
   background: var(--accent-gradient-alt);
   border: none;
@@ -1330,7 +1334,7 @@ html, body {
   padding: 12px 20px;
   background: var(--bg-card);
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 32px;
   color: var(--text-secondary);
   border: 1px solid var(--border-color-subtle);
   font-weight: 500;
@@ -1350,6 +1354,7 @@ html, body {
 }
 
 .nav-ctrl-btn {
+  font-size: 24px;
   padding: 14px 24px;
   background: var(--bg-card);
   border: 1px solid var(--border-color-subtle);
@@ -1372,7 +1377,7 @@ html, body {
 }
 
 .nav-suggestions h4 {
-  font-size: 13px;
+  font-size: 22px;
   color: var(--text-secondary);
   margin-bottom: 10px;
 }
@@ -1399,7 +1404,7 @@ html, body {
 }
 
 .suggestion-icon {
-  font-size: 24px;
+  font-size: 32px;
 }
 
 .suggestion-info {
@@ -1408,12 +1413,12 @@ html, body {
 }
 
 .suggestion-name {
-  font-size: 14px;
+  font-size: 32px;
   font-weight: 500;
 }
 
 .suggestion-addr {
-  font-size: 11px;
+  font-size: 22px;
   color: var(--text-secondary);
 }
 
@@ -1926,6 +1931,10 @@ html, body {
   display: none;
 }
 
+.leaflet-popup-content{
+  font-size: 24px;
+}
+
 /* Animations */
 @keyframes pulse-glow {
   0%, 100% { 
@@ -2027,7 +2036,7 @@ html, body {
 }
 
 .directions-header h4 {
-  font-size: 13px;
+  font-size: 26px;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -2040,7 +2049,7 @@ html, body {
   border-radius: 10px;
   color: white;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 24px;
   font-weight: 500;
   transition: all var(--transition-fast);
 }
@@ -2080,8 +2089,8 @@ html, body {
 }
 
 .direction-icon {
-  font-size: 22px;
-  min-width: 32px;
+  font-size: 32px;
+  min-width: 42px;
   text-align: center;
 }
 
@@ -2093,12 +2102,12 @@ html, body {
 }
 
 .direction-text {
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 600;
 }
 
 .direction-street {
-  font-size: 12px;
+  font-size: 22px;
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -2110,7 +2119,7 @@ html, body {
 }
 
 .direction-distance {
-  font-size: 13px;
+  font-size: 26px;
   color: var(--accent-primary);
   font-weight: 600;
   white-space: nowrap;
@@ -2128,7 +2137,7 @@ html, body {
   border: 1px solid var(--border-color);
   border-radius: 16px;
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 32px;
   font-weight: 500;
   z-index: 9999;
   box-shadow: var(--shadow-glow);

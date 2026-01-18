@@ -5,7 +5,10 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dev": "electron . --dev"
+    "dev": "electron . --dev",
+    "kiosk": "electron . --kiosk",
+    "build:linux": "electron-builder --linux",
+    "build:linux-arm": "electron-builder --linux --arm64"
   },
   "keywords": [
     "electron",

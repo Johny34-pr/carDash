@@ -4,13 +4,18 @@ const fs = require('fs');
 
 let mainWindow;
 
+// Check if running in production/kiosk mode
+const isKioskMode = process.argv.includes('--kiosk') || process.env.CARDASH_KIOSK === '1';
+
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 720,
     frame: false,
-    fullscreen: false,
+    fullscreen: isKioskMode,
+    kiosk: isKioskMode,
     backgroundColor: '#0a0a0f',
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -20,8 +25,10 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
   
-  // Open DevTools
-  // mainWindow.webContents.openDevTools();
+  // Only open DevTools in development mode
+  if (!isKioskMode) {
+    mainWindow.webContents.openDevTools();
+  }
   
   // Toggle fullscreen with F11
   mainWindow.webContents.on('before-input-event', (event, input) => {

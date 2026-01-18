@@ -10,6 +10,7 @@ echo "=========================="
 # Variables
 INSTALL_DIR="/opt/cardash"
 USER_NAME="${SUDO_USER:-$USER}"
+USER_HOME=$(eval echo ~$USER_NAME)
 
 # Check if running as root
 if [ "$EUID" -ne 0 ]; then
@@ -49,7 +50,19 @@ apt-get install -y \
     libsecret-1-0 \
     libasound2 \
     libgbm1 \
-    unclutter
+    unclutter \
+    fonts-noto-color-emoji \
+    fonts-liberation \
+    fonts-dejavu
+
+# Install Noto Color Emoji font for proper emoji rendering
+echo "📦 Installing emoji fonts..."
+if [ ! -f /usr/share/fonts/truetype/noto/NotoColorEmoji.ttf ]; then
+    mkdir -p /usr/share/fonts/truetype/noto
+fi
+
+# Update font cache
+fc-cache -f -v
 
 # Create installation directory
 echo "📁 Creating installation directory..."
@@ -74,20 +87,22 @@ echo "⚙️ Creating systemd service..."
 cat > /etc/systemd/system/cardash.service << EOF
 [Unit]
 Description=CarDash Automotive Dashboard
-After=graphical.target
+After=graphical.target network.target
 Wants=graphical.target
 
 [Service]
 Type=simple
 User=$USER_NAME
 Environment=DISPLAY=:0
+Environment=XAUTHORITY=$USER_HOME/.Xauthority
 Environment=CARDASH_KIOSK=1
 Environment=ELECTRON_DISABLE_GPU=0
+Environment=ELECTRON_DISABLE_SANDBOX=1
 WorkingDirectory=$INSTALL_DIR
-ExecStartPre=/bin/sleep 5
-ExecStart=/usr/bin/npm start -- --kiosk
+ExecStartPre=/bin/sleep 3
+ExecStart=$INSTALL_DIR/node_modules/.bin/electron . --kiosk --no-sandbox
 Restart=always
-RestartSec=3
+RestartSec=5
 
 [Install]
 WantedBy=graphical.target
@@ -95,8 +110,8 @@ EOF
 
 # Create X11 autostart config
 echo "⚙️ Creating X11 autostart..."
-mkdir -p /home/$USER_NAME/.config/openbox
-cat > /home/$USER_NAME/.config/openbox/autostart << EOF
+mkdir -p $USER_HOME/.config/openbox
+cat > $USER_HOME/.config/openbox/autostart << EOF
 # Hide mouse cursor after 1 second of inactivity
 unclutter -idle 1 &
 
@@ -106,12 +121,12 @@ xset -dpms
 xset s noblank
 
 # Start CarDash
-cd $INSTALL_DIR && npm start -- --kiosk &
+cd $INSTALL_DIR && ./node_modules/.bin/electron . --kiosk --no-sandbox &
 EOF
-chown -R "$USER_NAME:$USER_NAME" /home/$USER_NAME/.config
+chown -R "$USER_NAME:$USER_NAME" $USER_HOME/.config
 
 # Create .xinitrc for startx
-cat > /home/$USER_NAME/.xinitrc << EOF
+cat > $USER_HOME/.xinitrc << EOF
 #!/bin/bash
 # Disable screen blanking
 xset s off
@@ -124,8 +139,8 @@ unclutter -idle 1 &
 # Start openbox with CarDash
 exec openbox-session
 EOF
-chown "$USER_NAME:$USER_NAME" /home/$USER_NAME/.xinitrc
-chmod +x /home/$USER_NAME/.xinitrc
+chown "$USER_NAME:$USER_NAME" $USER_HOME/.xinitrc
+chmod +x $USER_HOME/.xinitrc
 
 # Enable auto-login (for Raspberry Pi / systemd)
 echo "⚙️ Configuring auto-login..."
@@ -136,18 +151,26 @@ ExecStart=
 ExecStart=-/sbin/agetty --autologin $USER_NAME --noclear %I \$TERM
 EOF
 
-# Auto-start X on login
-cat >> /home/$USER_NAME/.bash_profile << 'EOF'
+# Create/update .bash_profile for auto-starting X
+echo "⚙️ Configuring auto-start X..."
+# Remove old cardash entries if present
+if [ -f $USER_HOME/.bash_profile ]; then
+    sed -i '/# Auto-start X for CarDash/,/fi$/d' $USER_HOME/.bash_profile 2>/dev/null || true
+fi
+
+cat >> $USER_HOME/.bash_profile << 'EOF'
 
 # Auto-start X for CarDash
 if [ -z "$DISPLAY" ] && [ "$(tty)" = "/dev/tty1" ]; then
     exec startx
 fi
 EOF
-chown "$USER_NAME:$USER_NAME" /home/$USER_NAME/.bash_profile
+chown "$USER_NAME:$USER_NAME" $USER_HOME/.bash_profile
 
-# Reload systemd
+# Enable cardash service
+echo "⚙️ Enabling CarDash service..."
 systemctl daemon-reload
+systemctl enable cardash.service
 
 echo ""
 echo "✅ Installation complete!"

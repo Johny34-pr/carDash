@@ -3,7 +3,7 @@
 ## Rendszerkövetelmények
 
 ### Hardver
-- **Raspberry Pi 4** (4GB+ RAM ajánlott) VAGY
+- **Raspberry Pi 4/5** (4GB+ RAM ajánlott) VAGY
 - **Mini PC** (Intel/AMD)
 - **Érintőképernyő** (7" vagy nagyobb, ajánlott: 1024x600 vagy 1280x720)
 - **Autós tápegység** (12V → 5V/3A átalakító)
@@ -49,7 +49,7 @@ cd cardash/linux-setup
 chmod +x install.sh
 sudo ./install.sh
 
-# Raspberry Pi optimalizáció (opcionális)
+# Raspberry Pi optimalizáció (FONTOS!)
 chmod +x raspberry-pi-setup.sh
 sudo ./raspberry-pi-setup.sh
 
@@ -64,7 +64,7 @@ sudo reboot
 ### Manuális indítás
 ```bash
 cd /opt/cardash
-npm start -- --kiosk
+./node_modules/.bin/electron . --kiosk --no-sandbox
 ```
 
 ### Systemd szolgáltatás
@@ -72,7 +72,7 @@ npm start -- --kiosk
 # Indítás
 sudo systemctl start cardash
 
-# Automatikus indítás engedélyezése
+# Automatikus indítás engedélyezése (már automatikusan be van kapcsolva)
 sudo systemctl enable cardash
 
 # Állapot ellenőrzése
@@ -88,8 +88,11 @@ journalctl -u cardash -f
 
 ### Képernyő forgatás (ha szükséges)
 ```bash
-# /boot/config.txt szerkesztése
+# /boot/config.txt szerkesztése (Pi 4)
 sudo nano /boot/config.txt
+
+# VAGY Pi 5 esetén:
+sudo nano /boot/firmware/config.txt
 
 # Adjuk hozzá (0=nincs, 1=90°, 2=180°, 3=270°):
 display_rotate=0

@@ -1,3 +1,36 @@
+/* Local Font Definitions */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/web/Inter-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/web/Inter-Medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/web/Inter-Bold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Color Emoji';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/NotoColorEmoji.ttf') format('truetype');
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -48,12 +81,18 @@
 
 html, body {
   height: 100%;
-  font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow: hidden;
   user-select: none;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Emoji support */
+.nav-icon, .info-icon, .music-placeholder, .weather-icon,
+span:has(> :is(🚗, 🏠, 🎵, 🗺️, 📱, 🚘, ⚙️, ⛽, 🔋, 🌡️, 📍, ☀️, ⚠️, 💡, 📶, 🔵)) {
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 }
 
 /* Title Bar */
